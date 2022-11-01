@@ -1,0 +1,16 @@
+{
+    "description": "Inventory plugin resolves complex values with ERB and external data",
+    "files": ["ruby_task_helper/files/task_helper.rb"],
+    "private": true,
+    "input_method": "stdin",
+    "parameters": {
+        "merge": {
+            "description": "Yaml file and key load",
+            "type": "Optional[Hash[String, String]]"
+        },
+        "value": {
+            "description": "Value to parse or default for merge",
+            "type": "Optional[Any]"
+        }
+    }
+}
