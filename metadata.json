@@ -1,6 +1,6 @@
 {
   "name": "h0tw1r3-dynaml",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "author": "h0tw1r3",
   "summary": "A Bolt inventory plugin which resolves complex values with ERB and external data",
   "license": "MIT",
