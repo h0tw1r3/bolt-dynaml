@@ -44,7 +44,7 @@ class Dynaml < TaskHelper
       obj.transform_values! { |v| recursive_resolve(v, b) }
     elsif obj.is_a? Array
       obj.map! { |v| recursive_resolve(v, b) }
-    elsif obj.is_a? String and obj.include? "<%"
+    elsif obj.is_a?(String) && obj.include?('<%')
       begin
         obj.resolve(b)
       rescue
@@ -56,12 +56,10 @@ class Dynaml < TaskHelper
   end
 
   def yamlfile_var(filename, var)
-    begin
-      yaml = Psych.load_file(filename)
-      return yaml[var]
-    rescue Exception => e
-      return "failed to find #{var} in #{filename}: #{e}"
-    end
+    yaml = Psych.load_file(filename)
+    yaml[var]
+  rescue StandardError => e
+    "failed to find #{var} in #{filename}: #{e}"
   end
 
   def validate_options(opts)
@@ -73,12 +71,12 @@ class Dynaml < TaskHelper
   def task(opts)
     validate_options(opts)
 
-    template = opts.key?(:merge) && opts[:merge].key?(:file) ? opts[:merge][:file] : 'override.yaml'
+    template = (opts.key?(:merge) && opts[:merge].key?(:file)) ? opts[:merge][:file] : 'override.yaml'
     value = opts.key?(:value) ? opts[:value] : nil
     debug = opts.key?(:debug)
 
     template_path = "#{opts[:_boltdir]}/#{template}"
-    if File.exists?(template_path)
+    if File.exist?(template_path)
       @dynaml = Psych.safe_load(ERB.new(File.read(template_path)).result(binding), aliases: true, symbolize_names: true)
     elsif opts.key?(:merge)
       raise ValidationError, "#{template} file not found"
@@ -87,10 +85,10 @@ class Dynaml < TaskHelper
     if opts.key?(:merge)
       section = opts[:merge][:key]
       local_section = @dynaml.key?(section.to_sym) ? @dynaml[section.to_sym] : nil
-      if value.class == local_section.class && (local_section.is_a? Array or local_section.is_a? Hash)
+      if value.class == local_section.class && (local_section.is_a?(Array) || local_section.is_a?(Hash))
         value.deep_merge!(local_section)
-      else
-        value = local_section if local_section
+      elsif local_section
+        value = local_section
       end
     end
 
